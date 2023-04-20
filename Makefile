@@ -16,5 +16,8 @@ $(EXECUTABLE): $(OBJECTS)
 install:
 	cp poormanfs /usr/local/bin/
 
+build-deb:
+	@equivs-build package.conf
+
 clean:
 	rm -f $(OBJECTS) $(EXECUTABLE)

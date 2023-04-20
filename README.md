@@ -12,7 +12,7 @@ or browse the files easily without really attaching to the disks.
 
 poormanfs works on the user-level. So no root access is needed;
 
-[SEE IT IN ACTION](https://github.com/sinanislekdemir/poorman-fs)
+[See it in action on youtube](https://www.youtube.com/watch?v=EUga7YicvKs)
 
 ## Install
 

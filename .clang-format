@@ -1,0 +1,11 @@
+﻿---
+BasedOnStyle: LLVM
+IndentAccessModifiers: false
+IndentWidth: 8
+TabWidth: 8
+UseTab: AlignWithSpaces
+AllowShortIfStatementsOnASingleLine: false
+IndentCaseLabels: false
+ColumnLimit: 80
+SeparateDefinitionBlocks: Always
+...

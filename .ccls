@@ -1,0 +1,7 @@
+clang++
+
+%c -std=gnu17 -Os -Wall
+%cpp -fno-exceptions -std=gnu++17 -Os -Wall
+
+-I/usr/include/x86_64-linux-gnu/c++/11
+-I/usr/include/c++/11

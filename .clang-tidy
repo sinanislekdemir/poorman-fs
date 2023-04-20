@@ -1,0 +1,12 @@
+Checks: >
+  abseil-*,
+  bugprone-*,
+  clang-analyzer-*,
+  concurrency-*,
+  cppcoreguidelines-*,
+  google-readability-*,
+  llvm-*,
+  -bugprone-easily-swappable-parameters,
+  -cppcoreguidelines-special-member-functions,
+CheckOptions:
+FormatStyle: 'file'

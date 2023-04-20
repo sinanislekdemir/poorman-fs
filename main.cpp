@@ -133,7 +133,9 @@ static int hello_getattr(const char *path, struct stat *stbuf) {
 
 void reconnect() {
 	sqlite3_close(database);
-	int rc = sqlite3_open("~/poorman.sqlite", &database);
+	string homedir = string(getenv("HOME"));
+	string dbpath = homedir + "/poorman.sqlite";
+	int rc = sqlite3_open(dbpath.c_str(), &database);
 	if (rc) {
 		std::cerr << "Error opening Poorman DB: "
 			  << sqlite3_errmsg(database);

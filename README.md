@@ -16,6 +16,11 @@ poormanfs works on the user-level. So no root access is needed;
 
 ## Install
 
+### Install from the Debian Package
+
+Deb package can be found here:
+https://github.com/sinanislekdemir/poorman-fs/releases
+
 ### Install from the source code
 How to compile and run?
 

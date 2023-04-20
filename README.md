@@ -12,7 +12,11 @@ or browse the files easily without really attaching to the disks.
 
 poormanfs works on the user-level. So no root access is needed;
 
+[SEE IT IN ACTION](https://github.com/sinanislekdemir/poorman-fs)
+
 ## Install
+
+### Install from the source code
 How to compile and run?
 
 This software depends on `libsqlite3-dev` and `libfuse-dev` so make sure you have them first!

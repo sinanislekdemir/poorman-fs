@@ -5,7 +5,6 @@
 #include <fuse.h>
 #include <iostream>
 #include <libgen.h>
-#include <memory>
 #include <sqlite3.h>
 #include <stdio.h>
 #include <string.h>
@@ -115,9 +114,10 @@ static int hello_getattr(const char *path, struct stat *stbuf) {
 			stbuf->st_mode = S_IFDIR | 0755;
 			stbuf->st_nlink = 2;
 		} else {
+			long fsize = sqlite3_column_int64(dirlist, 4);
 			stbuf->st_mode = S_IFREG | 0444;
 			stbuf->st_nlink = 1;
-			stbuf->st_size = sqlite3_column_int(dirlist, 4);
+			stbuf->st_size = fsize;
 		}
 		result = true;
 		break;

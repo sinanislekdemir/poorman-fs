@@ -74,7 +74,7 @@ str_cat get_catalog_id(const std::string &path) {
 	return str_cat{id, original_path};
 }
 
-static int hello_getattr(const char *path, struct stat *stbuf) {
+static int pfs_getattry(const char *path, struct stat *stbuf) {
 	int res = 0;
 
 	// In the FS root. There should be only catalog names here.
@@ -144,7 +144,7 @@ void reconnect() {
 	}
 }
 
-static int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+static int pfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                          off_t offset, struct fuse_file_info *fi) {
 	(void)offset;
 	(void)fi;
@@ -208,7 +208,7 @@ static int hello_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 	return 0;
 }
 
-static int hello_open(const char *path, struct fuse_file_info *fi) {
+static int pfs_open(const char *path, struct fuse_file_info *fi) {
 	str_cat catalog = get_catalog_id(string(path));
 	sqlite3_stmt *fo;
 	const char *sql =
@@ -236,7 +236,7 @@ static int hello_open(const char *path, struct fuse_file_info *fi) {
 	return 0;
 }
 
-static int hello_read(const char *path, char *buf, size_t size, off_t offset,
+static int pfs_read(const char *path, char *buf, size_t size, off_t offset,
                       struct fuse_file_info *fi) {
 	size_t len;
 	(void)fi;
@@ -288,11 +288,11 @@ static int hello_read(const char *path, char *buf, size_t size, off_t offset,
 	return 0;
 }
 
-static struct fuse_operations hello_oper = {
-    .getattr = hello_getattr,
-    .open = hello_open,
-    .read = hello_read,
-    .readdir = hello_readdir,
+static struct fuse_operations pfs_oper = {
+    .getattr = pfs_getattry,
+    .open = pfs_open,
+    .read = pfs_read,
+    .readdir = pfs_readdir,
 };
 
 int main(int argc, char *argv[]) {
@@ -306,7 +306,7 @@ int main(int argc, char *argv[]) {
 		sqlite3_close(database);
 		return 1;
 	}
-	int return_code = fuse_main(argc, argv, &hello_oper, NULL);
+	int return_code = fuse_main(argc, argv, &pfs_oper, NULL);
 	sqlite3_close(database);
 	return return_code;
 }

@@ -28,7 +28,8 @@ std::string sql_to_string(const unsigned char *input) {
 }
 
 std::string get_filename(const std::string &path) {
-	char *file_name = basename((char *)path.c_str());
+	std::string path_copy = path;
+	char *file_name = basename(&path_copy[0]);
 	return std::string(file_name);
 }
 
@@ -74,7 +75,7 @@ str_cat get_catalog_id(const std::string &path) {
 	return str_cat{id, original_path};
 }
 
-static int pfs_getattry(const char *path, struct stat *stbuf) {
+static int pfs_getattr(const char *path, struct stat *stbuf) {
 	int res = 0;
 
 	// In the FS root. There should be only catalog names here.
@@ -95,6 +96,15 @@ static int pfs_getattry(const char *path, struct stat *stbuf) {
 	}
 
 	string rest = get_rest_of_path(string(path));
+	
+	// If rest is empty, we're looking at the catalog root itself
+	if (rest.empty()) {
+		memset(stbuf, 0, sizeof(struct stat));
+		stbuf->st_mode = S_IFDIR | 0755;
+		stbuf->st_nlink = 2;
+		return res;
+	}
+	
 	string full_path = catalog.original_path + rest;
 
 	sqlite3_stmt *dirlist;
@@ -133,7 +143,12 @@ static int pfs_getattry(const char *path, struct stat *stbuf) {
 
 void reconnect() {
 	sqlite3_close(database);
-	string homedir = string(getenv("HOME"));
+	const char *home = getenv("HOME");
+	if (!home) {
+		std::cerr << "Error: HOME environment variable not set" << endl;
+		exit(1);
+	}
+	string homedir = string(home);
 	string dbpath = homedir + "/poorman.sqlite";
 	int rc = sqlite3_open(dbpath.c_str(), &database);
 	if (rc) {
@@ -162,8 +177,7 @@ static int pfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 			cerr << "Error preparing SQL statement"
 			     << sqlite3_errmsg(database) << endl;
 			reconnect();
-			sqlite3_finalize(stmt);
-			return 1;
+			return -EIO;
 		}
 
 		while (sqlite3_step(stmt) == SQLITE_ROW) {
@@ -285,18 +299,24 @@ static int pfs_read(const char *path, char *buf, size_t size, off_t offset,
 		return size;
 	}
 
+	sqlite3_finalize(fo);
 	return 0;
 }
 
 static struct fuse_operations pfs_oper = {
-    .getattr = pfs_getattry,
+    .getattr = pfs_getattr,
     .open = pfs_open,
     .read = pfs_read,
     .readdir = pfs_readdir,
 };
 
 int main(int argc, char *argv[]) {
-	string homedir = string(getenv("HOME"));
+	const char *home = getenv("HOME");
+	if (!home) {
+		std::cerr << "Error: HOME environment variable not set" << endl;
+		return 1;
+	}
+	string homedir = string(home);
 	string dbpath = homedir + "/poorman.sqlite";
 	int rc = 0;
 	rc = sqlite3_open(dbpath.c_str(), &database);
